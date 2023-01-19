@@ -16,20 +16,30 @@ end entity;
 
 architecture automaton_rtl of automaton is
     -- states signals
-    type state is (if1,if2,if3,if4,id1,lda1,lda2,lda3,lda4,sta1,sta2,sta3,add1,hlt1,nop1);
+    type state is (if1,if2,if3,if4,id1,lda1,lda2,lda3,lda4,sta1,sta2,sta3,sta4,add1,hlt1,nop1);
     signal st : state;
     -- registers
-    signal ar : unsigned(4 downto 0) := (others => '0');
-    signal dr : unsigned(7 downto 0) := (others => '0');
-    signal pc : unsigned(3 downto 0) := (others => '0');
-    signal ir : unsigned(2 downto 0) := (others => '0');
-    signal acc: unsigned(7 downto 0) := (others => '0');
+    signal ar : unsigned(4 downto 0);
+    signal dr : unsigned(7 downto 0);
+    signal pc : unsigned(3 downto 0);
+    signal ir : unsigned(2 downto 0);
+    signal acc: unsigned(7 downto 0);
 begin
 
     process(clk) is
     begin 
         if rising_edge(clk) then
             if rst_n = '0' then
+                addr_bus <= (others => '0');
+                data_bus <= (others => '0');
+                screen   <= (others => '0');
+                rd <= '0';
+                wr <= '0';
+                ar <= (others => '0');
+                dr <= (others => '0');
+                pc <= (others => '0');
+                ir <= (others => '0');
+                acc<= (others => '0');
                 st <= if1;
             else
                 case st is
@@ -83,12 +93,14 @@ begin
                         ar <= '1'&dr(3 downto 0);
                         st <= sta2;
                     when sta2 =>
-                        wr <= '1';
                         addr_bus <= std_logic_vector(ar);
                         dr <= acc;
                         st <= sta3;
                     when sta3 =>
                         data_bus <= std_logic_vector(dr);
+                        st <= sta4;
+                    when sta4 =>
+                        wr <= '1';
                         st <= if1;
                     when add1 =>
                         acc <= dr(3 downto 2) + dr(1 downto 0);

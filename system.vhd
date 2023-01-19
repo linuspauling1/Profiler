@@ -11,16 +11,19 @@ entity system is
 end entity;
 
 architecture system_rtl of system is
-    signal rd : std_logic := '0';
-    signal wr : std_logic := '0';
-    signal address : std_logic_vector(4 downto 0) := (others => '0');
-    signal data : std_logic_vector(7 downto 0) := (others => 'Z');
-    signal en_n : std_logic := '1';
+    signal rd : std_logic;
+    signal wr : std_logic;
+    signal address : std_logic_vector(4 downto 0);
+    signal data : std_logic_vector(7 downto 0);
+    
+    function invert(input : std_logic) return std_logic is
+    begin
+        return not input;
+    end function;
 begin
-    en_n <= not address(4);
     i_eprom : entity work.eprom(eprom_rtl) port map(
         rd => rd,
-        en => en_n,
+        en => invert(address(4)),
         clk => clk,
         address => address(3 downto 0),
         data => data
