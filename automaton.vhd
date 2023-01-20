@@ -16,7 +16,7 @@ end entity;
 
 architecture automaton_rtl of automaton is
     -- states signals
-    type state is (if1,if2,if3,if4,if5,id1,lda1,lda2,lda3,lda4,lda5,sta1,sta2,sta3,sta4,add1,hlt1,nop1);
+    type state is (if1,if2,if3,if4,if5,id1,lda1,lda2,lda3,lda4,lda5,sta1,sta2,sta3,add1,hlt1,nop1);
     signal st : state;
     -- registers
     signal ar : unsigned(4 downto 0);
@@ -30,16 +30,16 @@ begin
     begin 
         if rising_edge(clk) then
             if rst_n = '0' then
-                addr_bus <= (others => 'X');
+                addr_bus <= (others => 'U');
                 data_bus <= (others => 'Z'); -- prepared to receive data!
-                screen   <= (others => 'X');
+                screen   <= (others => 'U');
                 rd <= '0'; -- it doesen't either read
                 wr <= '0'; -- nor write data at this point!
-                ar <= (others => 'X');
-                dr <= (others => 'X');
+                ar <= (others => 'U');
+                dr <= (others => 'U');
                 pc <= (others => '0'); -- it is necessary to be set to 0 at the beginning!
-                ir <= (others => 'X');
-                acc<= (others => 'X');
+                ir <= (others => 'U');
+                acc<= (others => 'U');
                 st <= if1;
             else
                 case st is
@@ -88,7 +88,6 @@ begin
                     when lda3 =>
                         st <= lda4;
                     when lda4 =>
-                        report integer'image(to_integer(signed(data_bus)));
                         dr <= unsigned(data_bus);
                         st <= lda5;
                     when lda5 =>
