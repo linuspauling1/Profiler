@@ -5,3 +5,4 @@
 ### Unitatea de control
 
 ## Profiler
+![profiler](./profiler.bmp)
